@@ -10,7 +10,8 @@ use clap::{Arg, App, AppSettings, SubCommand};
 fn main() -> std::io::Result<()> {
     let app = App::new("randoom")
                         .setting(AppSettings::ColorAuto)
-                        .version("0.1.2")
+					    .setting(AppSettings::AllowNegativeNumbers)
+                        .version("0.1.3")
                         .author("Bence László <bencelaszlo@protonmail.com>")
                         .about("Generate random numbers, texts, and colors.")
 
