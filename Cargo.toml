@@ -1,8 +1,12 @@
 [package]
 name = "randoom"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["bencelaszlo <bencelaszlo@protonmail.com>"]
 
-[dependencies]
-clap = "2.26.0"
-rand = "0.6.5"
+[dependencies.clap]
+version = "2.32.0"
+default-features = false
+features = ["suggestions", "color", "wrap_help"]
+
+[dependencies.rand]
+version = "0.6.5"
