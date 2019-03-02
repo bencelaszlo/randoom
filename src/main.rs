@@ -5,11 +5,12 @@ extern crate rand;
 use rand::Rng;
 
 extern crate clap;
-use clap::{Arg, App, SubCommand};
+use clap::{Arg, App, AppSettings, SubCommand};
 
 fn main() -> std::io::Result<()> {
-    let matches = App::new("randoom")
-                        .version("0.1.0")
+    let app = App::new("randoom")
+                        .setting(AppSettings::ColorAuto)
+                        .version("0.1.2")
                         .author("Bence László <bencelaszlo@protonmail.com>")
                         .about("Generate random numbers, texts, and colors.")
 
@@ -29,13 +30,13 @@ fn main() -> std::io::Result<()> {
                         .help("Lower limit for numbers.")
                         .short("l")
                         .takes_value(true)
-                        .required(true))
+                        .required(false))
 
                         .arg(Arg::with_name("higher_limit")
                         .help("Higher limit for numbers.")
                         .short("h")
                         .takes_value(true)
-                        .required(true))
+                        .required(false))
 
                         .arg(Arg::with_name("separator")
                         .help("Separator character between individual values. Default value: \n (new line).")
@@ -54,37 +55,37 @@ fn main() -> std::io::Result<()> {
     let mut option_datatype: String = "".to_string();
     let mut option_number: usize = 0;
     let mut option_lower_limit: f64 = 0.0f64;
-    let mut option_higher_limit: f64 = 0.0f64;
+    let mut option_higher_limit: f64 = 1.0f64;
     let mut option_separator: char = "\n".parse().unwrap();
     let mut option_output_filename: String = "./random_data.txt".to_string();
 
     println!("Generate random data with the following parameters:");
 
-    if let Some(datatype) = matches.value_of("datatype") {
+    if let Some(datatype) = app.value_of("datatype") {
             println!("choosen type: {}", datatype);
             option_datatype = datatype.to_string();
     }
 
-    if let Some(number) = matches.value_of("number") {
+    if let Some(number) = app.value_of("number") {
         println!("number: {}", number);
         option_number = number.parse().unwrap();
     }
 
-    if let Some(lower_limit) = matches.value_of("lower_limit") {
+    if let Some(lower_limit) = app.value_of("lower_limit") {
         println!("lower limit: {}", lower_limit);
         option_lower_limit = lower_limit.parse().unwrap();
     }
-    if let Some(higher_limit) = matches.value_of("higher_limit") {
+    if let Some(higher_limit) = app.value_of("higher_limit") {
         println!("higher_limit: {}", higher_limit);
         option_higher_limit = higher_limit.parse().unwrap();
     }
 
-    if let Some(separator) = matches.value_of("separator") {
+    if let Some(separator) = app.value_of("separator") {
         println!("separator: {}", separator);
         option_separator = separator.parse().unwrap();
     }
 
-    if let Some(output) = matches.value_of("output") {
+    if let Some(output) = app.value_of("output") {
         println!("output filename: {}", output);
         option_output_filename = output.parse().unwrap();
     }
@@ -157,9 +158,7 @@ fn main() -> std::io::Result<()> {
         }
     }*/
 
-
     println!("\rWriting: {} / {}", option_number, option_number);
-    //write!(buffer, "{}", random_data[option_number-1]).unwrap();
     println!("{} data generated and wrote into file successfully.", option_number);
 
     Ok(())
