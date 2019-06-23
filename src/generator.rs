@@ -25,7 +25,7 @@ where
             print!(
                 "\r--> {} / {}",
                 (i + 1).to_string().cyan(),
-                generated_value.to_string().blue()
+                n.to_string().blue()
             );
         }
         generated_values.push(generated_value);
