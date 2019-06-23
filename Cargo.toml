@@ -4,7 +4,7 @@ version = "0.2.0"
 authors = ["bencelaszlo <bencelaszlo@protonmail.com>"]
 
 [dependencies.clap]
-version = "2.32.0"
+version = "2.33.0"
 default-features = false
 features = ["suggestions", "color", "wrap_help"]
 
@@ -12,4 +12,13 @@ features = ["suggestions", "color", "wrap_help"]
 version = "0.6.5"
 
 [dependencies.colored]
-version = "1.7.0"
+version = "1.8.0"
+
+[dependencies.serde]
+version = "1.0.92"
+
+[dependencies.serde_json]
+version = "1.0"
+
+[dependencies.num-traits]
+version = "0.2.8"
