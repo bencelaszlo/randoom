@@ -14,7 +14,7 @@ pub fn number_generator<T: num_traits::Num>(
 where
     T: rand::distributions::uniform::SampleUniform,
     T: std::marker::Copy,
-    T: std::string::ToString
+    T: std::string::ToString,
 {
     let mut generated_values = Vec::new();
 

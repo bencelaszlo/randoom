@@ -22,10 +22,14 @@ where
     Ok(())
 }
 
-pub fn write_to_file<T>(vector_to_write: Vec<T>, output_filename: String, separator_char: char) -> std::io::Result<()>
+pub fn write_to_file<T>(
+    vector_to_write: Vec<T>,
+    output_filename: String,
+    separator_char: char,
+) -> std::io::Result<()>
 where
-    T: std::fmt::Display
- {
+    T: std::fmt::Display,
+{
     let mut buffer = File::create(output_filename)?;
 
     for line in vector_to_write {
