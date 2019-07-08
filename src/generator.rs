@@ -25,10 +25,36 @@ where
             print!(
                 "\r--> {} / {}",
                 (i + 1).to_string().cyan(),
-                generated_value.to_string().blue()
+                n.to_string().blue()
             );
         }
         generated_values.push(generated_value);
+    }
+
+    return generated_values;
+}
+
+pub fn bool_generator(n: usize, verbose_mode: bool) -> Vec<bool> {
+    let mut generated_values = Vec::new();
+
+    let mut rng = rand::thread_rng();
+    for i in 0..n {
+        let temp_num_value = rng.gen_range(0, 2);
+        let bool_value: bool;
+        if temp_num_value == 0 {
+            bool_value = false;
+        } else {
+            bool_value = true;
+        }
+
+        if verbose_mode {
+            print!(
+                "\r--> {} / {}",
+                (i + 1).to_string().cyan(),
+                n.to_string().blue()
+            );
+        }
+        generated_values.push(bool_value);
     }
 
     return generated_values;

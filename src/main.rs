@@ -1,11 +1,7 @@
 mod io;
 mod generator;
 
-use std::fs::File;
-use std::io::Write;
-
 extern crate rand;
-use rand::Rng;
 
 extern crate clap;
 use clap::{App, AppSettings, Arg};
@@ -15,6 +11,8 @@ use colored::*;
 
 extern crate serde;
 extern crate serde_json;
+
+extern crate regex;
 
 fn print_in_verbose_mode(verbose_mode: bool, text: &str, text_color: &str) {
     if verbose_mode {
@@ -32,6 +30,7 @@ fn print_in_verbose_mode(verbose_mode: bool, text: &str, text_color: &str) {
     }
 }
 
+//valami dokumentáció nem lenne rossz, rostdoc létezik? mint a javadoc / oxygen
 fn main() -> std::io::Result<()> {
 
     let app = App::new("randoom")
@@ -39,7 +38,7 @@ fn main() -> std::io::Result<()> {
 			 .setting(AppSettings::AllowNegativeNumbers)
              .version("0.2.0")
              .author("Bence László <bencelaszlo@protonmail.com>")
-             .about("Generate random numbers and colors.")
+             .about("Generate random numbers, texts, JSONs and colors.")
 
 	         .arg(Arg::with_name("verbose")
 	         .help("Verbose mode. Print more detail to the terminal.")
@@ -118,6 +117,10 @@ fn main() -> std::io::Result<()> {
 
 	print_in_verbose_mode(option_verbose, "\nGenerate random data with the following parameters:", "cyan");
 
+    /*if let Some(json) = app.value_of("json") {
+    	option_json = json.to_string();
+    }*/
+
     if let Some(datatype) = app.value_of("datatype") {
         print_in_verbose_mode(option_verbose, "\nchoosen type:", "white");
 		print_in_verbose_mode(option_verbose, datatype, "cyan");
@@ -180,8 +183,14 @@ fn main() -> std::io::Result<()> {
     } else if option_datatype == "usize" {
         let random_data: Vec<usize> = generator::number_generator(option_number, option_lower_limit as usize, (option_higher_limit + 1.0f64) as usize, option_verbose);
         let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
-    } else if option_datatype == "color" || option_datatype == "rgb" {
+    } /*else if option_datatype == "char" {
+        let random_data: Vec<char> = generator::char_generator(option_number, option_lower_limit, option_higher_limit, option_verbose);
+        let _file_write_result = io::write_to_file(random_data, option_output_filename, option_separator);
+    }*/ else if option_datatype == "color" || option_datatype == "rgb" {
         let random_data = generator::color_generator(option_number, option_verbose);
+        let _file_write_result = io::write_to_file(random_data, option_output_filename, option_separator);
+    } else if option_datatype == "bool" || option_datatype == "boolean" || option_datatype == "logic" {
+        let random_data = generator::bool_generator(option_number, option_verbose);
         let _file_write_result = io::write_to_file(random_data, option_output_filename, option_separator);
     }
 
