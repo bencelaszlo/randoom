@@ -15,10 +15,10 @@ version = "0.7.0"
 version = "1.8.0"
 
 [dependencies.serde]
-version = "1.0.92"
+version = "1.0.94"
 
 [dependencies.serde_json]
-version = "1.0"
+version = "1.0.40"
 
 [dependencies.num-traits]
 version = "0.2.8"
