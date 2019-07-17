@@ -174,6 +174,38 @@ pub fn char_generator(
     return generated_values;
 }
 
+pub fn string_generator(
+    n: usize,
+    min_length: usize,
+    max_length: usize,
+    special_characters_mode: bool,
+    number_character_mode: bool,
+    verbose_mode: bool,
+) -> Vec<String> {
+    let mut generated_values: Vec<String> = Vec::new();
+
+    let mut rng = rand::thread_rng();
+    for i in 0..n {
+        let string_length: usize = rng.gen_range(min_length, max_length);
+        let generated_chars: Vec<char> = char_generator(
+            string_length,
+            special_characters_mode,
+            number_character_mode,
+            false,
+        );
+        let generated_value: String = generated_chars.into_iter().collect();
+        if verbose_mode {
+            print!(
+                "\r--> {} / {}",
+                (i + 1).to_string().cyan(),
+                n.to_string().blue()
+            );
+        }
+        generated_values.push(generated_value);
+    }
+    return generated_values;
+}
+
 pub fn color_generator(n: usize, verbose_mode: bool) -> Vec<String> {
     let mut generated_values = Vec::new();
 
