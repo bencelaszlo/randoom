@@ -34,7 +34,7 @@ fn main() -> std::io::Result<()> {
     let app = App::new("randoom")
              .setting(AppSettings::ColorAuto)
 			 .setting(AppSettings::AllowNegativeNumbers)
-             .version("0.2.0")
+             .version("0.3.0")
              .author("Bence László <bencelaszlo@protonmail.com>")
              .about("Generate random numbers, texts, JSONs and colors.")
 
@@ -92,6 +92,18 @@ fn main() -> std::io::Result<()> {
              .takes_value(false)
              .required(false))
 
+             .arg(Arg::with_name("string_min_length")
+             .help("Minimum length of random strings.")
+             .long("string-min-length")
+             .takes_value(true)
+             .required(false))
+
+             .arg(Arg::with_name("string_max_length")
+             .help("Maximum length of random strings.")
+             .long("string-max-length")
+             .takes_value(true)
+             .required(false))
+
 	         .arg(Arg::with_name("output")
 	         .help("Output filename. Default value: random_data.txt")
 	         .short("o")
@@ -120,6 +132,8 @@ fn main() -> std::io::Result<()> {
     let mut option_separator: char = "\n".parse().unwrap();
     let mut option_special_character_mode: bool = false;
     let mut option_number_character_mode: bool = false;
+    let mut option_string_min_length: usize = 0;
+    let mut option_string_max_length: usize = 4;
     let mut option_output_filename: String = "./randoom_data.txt".to_string();
 
     if app.is_present("verbose") {
@@ -168,7 +182,7 @@ fn main() -> std::io::Result<()> {
     if app.is_present("special_character_mode") {
         option_special_character_mode = true;
         print_in_verbose_mode(
-            option_special_character_mode,
+            option_verbose,
             "\nCharacter generator can generate special characters now, too.",
             "white",
         );
@@ -177,10 +191,22 @@ fn main() -> std::io::Result<()> {
     if app.is_present("number_character_mode") {
         option_number_character_mode = true;
         print_in_verbose_mode(
-            option_number_character_mode,
+            option_verbose,
             "\nCharacter generator can generate number characters now, too.",
             "white",
         );
+    }
+
+    if let Some(string_min_length) = app.value_of("string_min_length") {
+        print_in_verbose_mode(option_verbose, "\nminimum length: ", "white");
+        print_in_verbose_mode(option_verbose, string_min_length, "cyan");
+        option_string_min_length = string_min_length.parse().unwrap();
+    }
+
+    if let Some(string_max_length) = app.value_of("string_max_length") {
+        print_in_verbose_mode(option_verbose, "\nmaximum length: ", "white");
+        print_in_verbose_mode(option_verbose, string_max_length, "cyan");
+        option_string_max_length = string_max_length.parse().unwrap();
     }
 
     if let Some(separator) = app.value_of("separator") {
@@ -270,6 +296,17 @@ fn main() -> std::io::Result<()> {
     } else if option_datatype == "char" || option_datatype == "character" {
         let random_data: Vec<char> = generator::char_generator(
             option_number,
+            option_special_character_mode,
+            option_number_character_mode,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_to_file(random_data, option_output_filename, option_separator);
+    } else if option_datatype == "string" || option_datatype == "str" {
+        let random_data: Vec<String> = generator::string_generator(
+            option_number,
+            option_string_min_length,
+            option_string_max_length,
             option_special_character_mode,
             option_number_character_mode,
             option_verbose,
