@@ -1,11 +1,7 @@
 mod generator;
 mod io;
 
-use std::fs::File;
-use std::io::Write;
-
 extern crate rand;
-use rand::Rng;
 
 extern crate clap;
 use clap::{App, AppSettings, Arg};
@@ -15,6 +11,8 @@ use colored::*;
 
 extern crate serde;
 extern crate serde_json;
+
+extern crate regex;
 
 fn print_in_verbose_mode(verbose_mode: bool, text: &str, text_color: &str) {
     if verbose_mode {
@@ -36,9 +34,9 @@ fn main() -> std::io::Result<()> {
     let app = App::new("randoom")
              .setting(AppSettings::ColorAuto)
 			 .setting(AppSettings::AllowNegativeNumbers)
-             .version("0.2.0")
+             .version("0.3.0")
              .author("Bence László <bencelaszlo@protonmail.com>")
-             .about("Generate random numbers and colors.")
+             .about("Generate random numbers, texts, JSONs and colors.")
 
 	         .arg(Arg::with_name("verbose")
 	         .help("Verbose mode. Print more detail to the terminal.")
@@ -82,6 +80,30 @@ fn main() -> std::io::Result<()> {
 	         .takes_value(true)
 	         .required(false))
 
+             .arg(Arg::with_name("special_character_mode")
+             .help("Turn on special characters in character generator.")
+             .long("special-character-mode")
+             .takes_value(false)
+             .required(false))
+
+             .arg(Arg::with_name("number_character_mode")
+             .help("Turn on numbers in character generator.")
+             .long("number-character-mode")
+             .takes_value(false)
+             .required(false))
+
+             .arg(Arg::with_name("string_min_length")
+             .help("Minimum length of random strings.")
+             .long("string-min-length")
+             .takes_value(true)
+             .required(false))
+
+             .arg(Arg::with_name("string_max_length")
+             .help("Maximum length of random strings.")
+             .long("string-max-length")
+             .takes_value(true)
+             .required(false))
+
 	         .arg(Arg::with_name("output")
 	         .help("Output filename. Default value: random_data.txt")
 	         .short("o")
@@ -108,7 +130,11 @@ fn main() -> std::io::Result<()> {
     let mut option_lower_limit: f64 = 0.0f64;
     let mut option_higher_limit: f64 = 1.0f64;
     let mut option_separator: char = "\n".parse().unwrap();
-    let mut option_output_filename: String = "./random_data.txt".to_string();
+    let mut option_special_character_mode: bool = false;
+    let mut option_number_character_mode: bool = false;
+    let mut option_string_min_length: usize = 0;
+    let mut option_string_max_length: usize = 4;
+    let mut option_output_filename: String = "./randoom_data.txt".to_string();
 
     if app.is_present("verbose") {
         option_verbose = true;
@@ -125,28 +151,62 @@ fn main() -> std::io::Result<()> {
         "cyan",
     );
 
+    /*if let Some(json) = app.value_of("json") {
+        option_json = json.to_string();
+    }*/
+
     if let Some(datatype) = app.value_of("datatype") {
-        print_in_verbose_mode(option_verbose, "\nchoosen type:", "white");
+        print_in_verbose_mode(option_verbose, "\nChosen type: ", "white");
         print_in_verbose_mode(option_verbose, datatype, "cyan");
         option_datatype = datatype.to_string();
     }
 
     if let Some(number) = app.value_of("number") {
-        print_in_verbose_mode(option_verbose, "\nnumber: ", "white");
+        print_in_verbose_mode(option_verbose, "\nNumber: ", "white");
         print_in_verbose_mode(option_verbose, number, "cyan");
         option_number = number.parse().unwrap();
     }
 
     if let Some(lower_limit) = app.value_of("lower_limit") {
-        print_in_verbose_mode(option_verbose, "\nlower limit: ", "white");
+        print_in_verbose_mode(option_verbose, "\nLower limit: ", "white");
         print_in_verbose_mode(option_verbose, lower_limit, "cyan");
         option_lower_limit = lower_limit.parse().unwrap();
     }
 
     if let Some(higher_limit) = app.value_of("higher_limit") {
-        print_in_verbose_mode(option_verbose, "\nhigher limit: ", "white");
+        print_in_verbose_mode(option_verbose, "\nHigher limit: ", "white");
         print_in_verbose_mode(option_verbose, higher_limit, "cyan");
         option_higher_limit = higher_limit.parse().unwrap();
+    }
+
+    if app.is_present("special_character_mode") {
+        option_special_character_mode = true;
+        print_in_verbose_mode(
+            option_verbose,
+            "\nCharacter generator can generate special characters now, too.",
+            "white",
+        );
+    }
+
+    if app.is_present("number_character_mode") {
+        option_number_character_mode = true;
+        print_in_verbose_mode(
+            option_verbose,
+            "\nCharacter generator can generate number characters now, too.",
+            "white",
+        );
+    }
+
+    if let Some(string_min_length) = app.value_of("string_min_length") {
+        print_in_verbose_mode(option_verbose, "\nminimum length: ", "white");
+        print_in_verbose_mode(option_verbose, string_min_length, "cyan");
+        option_string_min_length = string_min_length.parse().unwrap();
+    }
+
+    if let Some(string_max_length) = app.value_of("string_max_length") {
+        print_in_verbose_mode(option_verbose, "\nmaximum length: ", "white");
+        print_in_verbose_mode(option_verbose, string_max_length, "cyan");
+        option_string_max_length = string_max_length.parse().unwrap();
     }
 
     if let Some(separator) = app.value_of("separator") {
@@ -233,8 +293,35 @@ fn main() -> std::io::Result<()> {
         );
         let _file_write_result =
             io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+    } else if option_datatype == "char" || option_datatype == "character" {
+        let random_data: Vec<char> = generator::char_generator(
+            option_number,
+            option_special_character_mode,
+            option_number_character_mode,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_to_file(random_data, option_output_filename, option_separator);
+    } else if option_datatype == "string" || option_datatype == "str" {
+        let random_data: Vec<String> = generator::string_generator(
+            option_number,
+            option_string_min_length,
+            option_string_max_length,
+            option_special_character_mode,
+            option_number_character_mode,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_to_file(random_data, option_output_filename, option_separator);
     } else if option_datatype == "color" || option_datatype == "rgb" {
         let random_data = generator::color_generator(option_number, option_verbose);
+        let _file_write_result =
+            io::write_to_file(random_data, option_output_filename, option_separator);
+    } else if option_datatype == "bool"
+        || option_datatype == "boolean"
+        || option_datatype == "logic"
+    {
+        let random_data = generator::bool_generator(option_number, option_verbose);
         let _file_write_result =
             io::write_to_file(random_data, option_output_filename, option_separator);
     }

@@ -5,18 +5,17 @@ An easy-to-use CLI tool for generating random numbers, texts, and colors.
 
 - generate random numbers
   - generate floating point numbers
-    - with single precision: `$ randoom -t f32 -n <number>`
-    - with double precision: `$ randoom -t f64 -n <number>`
+    - with single precision: `$ randoom -t f32 -n <number>` or `$ randoom -t float / real -n <number>`
+    - with double precision: `$ randoom -t f64 -n <number>` or `$ randoom -t double -n <number`
   - generate integers
-    - `$ randoom -t <i32 / i64 / isize> -n <number`
+    - `$ randoom -t <i32 / int / integer / i64 / isize> -n <number`
     - sample input: `-52`
   - generate unsinged integers
     - `$ randoom -t <u32 / u64 / usize> -n <number>`
     - sample input: `23`
-- ~~generate random texts~~ (W.I.P.)
 - generate random colors
   - generate RGB colors
-    - `$ randoom -t rgb -n <number>`
+    - `$ randoom -t rgb -n <number>` or `$ randoom -t color -n <number>`
     - sample output: `#ff2353`
 
 ## Manual
@@ -35,4 +34,6 @@ An easy-to-use CLI tool for generating random numbers, texts, and colors.
 - Rustup (the Rust installer and version management tool): https://www.rust-lang.org/learn/get-started
 - clap (for argument parsing): https://crates.io/crates/clap
 - colored (for colored terminal output): https://crates.io/crates/colored
-
+- num-traits: https://crates.io/crates/num-traits
+- serde: https://crates.io/crates/serde
+- serde_json: https://crates.io/crates/serde_json
