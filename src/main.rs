@@ -1,5 +1,5 @@
-mod io;
 mod generator;
+mod io;
 
 extern crate rand;
 
@@ -25,18 +25,17 @@ fn print_in_verbose_mode(verbose_mode: bool, text: &str, text_color: &str) {
             "blue" => print!("{}", text.blue()),
             "magenta" => print!("{}", text.magenta()),
             "cyan" => print!("{}", text.cyan()),
-            _ => print!("{}", text.white())
+            _ => print!("{}", text.white()),
         }
     }
 }
 
 //valami dokumentáció nem lenne rossz, rostdoc létezik? mint a javadoc / oxygen
 fn main() -> std::io::Result<()> {
-
     let app = App::new("randoom")
              .setting(AppSettings::ColorAuto)
 			 .setting(AppSettings::AllowNegativeNumbers)
-             .version("0.2.0")
+             .version("0.3.0")
              .author("Bence László <bencelaszlo@protonmail.com>")
              .about("Generate random numbers, texts, JSONs and colors.")
 
@@ -112,18 +111,22 @@ fn main() -> std::io::Result<()> {
 
     if app.is_present("verbose") {
         option_verbose = true;
-        print_in_verbose_mode(option_verbose, "randoom will operate in verbose mode.", "white");
+        print_in_verbose_mode(
+            option_verbose,
+            "randoom will operate in verbose mode.",
+            "white",
+        );
     }
 
-	print_in_verbose_mode(option_verbose, "\nGenerate random data with the following parameters:", "cyan");
-
-    /*if let Some(json) = app.value_of("json") {
-    	option_json = json.to_string();
-    }*/
+    print_in_verbose_mode(
+        option_verbose,
+        "\nGenerate random data with the following parameters:",
+        "cyan",
+    );
 
     if let Some(datatype) = app.value_of("datatype") {
         print_in_verbose_mode(option_verbose, "\nchoosen type:", "white");
-		print_in_verbose_mode(option_verbose, datatype, "cyan");
+        print_in_verbose_mode(option_verbose, datatype, "cyan");
         option_datatype = datatype.to_string();
     }
 
@@ -157,45 +160,106 @@ fn main() -> std::io::Result<()> {
         option_output_filename = output.parse().unwrap();
     }
 
-    print_in_verbose_mode(option_verbose, "\nGenerate random data and write generated data into file...", "magenta");
+    print_in_verbose_mode(
+        option_verbose,
+        "\nGenerate random data and write generated data into file...",
+        "magenta",
+    );
     print_in_verbose_mode(option_verbose, "\nCreate file...", "magenta");
 
     print_in_verbose_mode(option_verbose, "\nGenerate random values...\n", "magenta");
 
     if option_datatype == "f32" || option_datatype == "float" || option_datatype == "real" {
-        let random_data: Vec<f32> = generator::number_generator(option_number, option_lower_limit as f32, option_higher_limit as f32, option_verbose);
-        let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+        let random_data: Vec<f32> = generator::number_generator(
+            option_number,
+            option_lower_limit as f32,
+            option_higher_limit as f32,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_numbers_to_file(random_data, option_output_filename, option_separator);
     } else if option_datatype == "f64" || option_datatype == "double" {
-        let random_data: Vec<f64> = generator::number_generator(option_number, option_lower_limit, option_higher_limit, option_verbose);
-        let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+        let random_data: Vec<f64> = generator::number_generator(
+            option_number,
+            option_lower_limit,
+            option_higher_limit,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_numbers_to_file(random_data, option_output_filename, option_separator);
     } else if option_datatype == "i32" || option_datatype == "int" || option_datatype == "integer" {
-        let random_data: Vec<i32> = generator::number_generator(option_number, option_lower_limit as i32, (option_higher_limit + 1.0f64) as i32, option_verbose);
-        let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+        let random_data: Vec<i32> = generator::number_generator(
+            option_number,
+            option_lower_limit as i32,
+            (option_higher_limit + 1.0f64) as i32,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_numbers_to_file(random_data, option_output_filename, option_separator);
     } else if option_datatype == "isize" {
-        let random_data: Vec<isize> = generator::number_generator(option_number, option_lower_limit as isize, (option_higher_limit + 1.0f64) as isize, option_verbose);
-        let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+        let random_data: Vec<isize> = generator::number_generator(
+            option_number,
+            option_lower_limit as isize,
+            (option_higher_limit + 1.0f64) as isize,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_numbers_to_file(random_data, option_output_filename, option_separator);
     } else if option_datatype == "u32" {
-        let random_data: Vec<u32> = generator::number_generator(option_number, option_lower_limit as u32, (option_higher_limit + 1.0f64) as u32, option_verbose);
-        let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+        let random_data: Vec<u32> = generator::number_generator(
+            option_number,
+            option_lower_limit as u32,
+            (option_higher_limit + 1.0f64) as u32,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_numbers_to_file(random_data, option_output_filename, option_separator);
     } else if option_datatype == "u64" {
-        let random_data: Vec<u64> = generator::number_generator(option_number, option_lower_limit as u64, (option_higher_limit + 1.0f64) as u64, option_verbose);
-        let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+        let random_data: Vec<u64> = generator::number_generator(
+            option_number,
+            option_lower_limit as u64,
+            (option_higher_limit + 1.0f64) as u64,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_numbers_to_file(random_data, option_output_filename, option_separator);
     } else if option_datatype == "usize" {
-        let random_data: Vec<usize> = generator::number_generator(option_number, option_lower_limit as usize, (option_higher_limit + 1.0f64) as usize, option_verbose);
-        let _file_write_result = io::write_numbers_to_file(random_data, option_output_filename, option_separator);
-    } /*else if option_datatype == "char" {
+        let random_data: Vec<usize> = generator::number_generator(
+            option_number,
+            option_lower_limit as usize,
+            (option_higher_limit + 1.0f64) as usize,
+            option_verbose,
+        );
+        let _file_write_result =
+            io::write_numbers_to_file(random_data, option_output_filename, option_separator);
+    }
+    /*else if option_datatype == "char" {
         let random_data: Vec<char> = generator::char_generator(option_number, option_lower_limit, option_higher_limit, option_verbose);
         let _file_write_result = io::write_to_file(random_data, option_output_filename, option_separator);
-    }*/ else if option_datatype == "color" || option_datatype == "rgb" {
+    }*/
+    else if option_datatype == "json" {
+        let random_data = generator::json_generator();
+        let _file_write_result =
+            io::write_to_file(random_data, option_output_filename, option_separator);
+    } else if option_datatype == "color" || option_datatype == "rgb" {
         let random_data = generator::color_generator(option_number, option_verbose);
-        let _file_write_result = io::write_to_file(random_data, option_output_filename, option_separator);
-    } else if option_datatype == "bool" || option_datatype == "boolean" || option_datatype == "logic" {
+        let _file_write_result =
+            io::write_to_file(random_data, option_output_filename, option_separator);
+    } else if option_datatype == "bool"
+        || option_datatype == "boolean"
+        || option_datatype == "logic"
+    {
         let random_data = generator::bool_generator(option_number, option_verbose);
-        let _file_write_result = io::write_to_file(random_data, option_output_filename, option_separator);
+        let _file_write_result =
+            io::write_to_file(random_data, option_output_filename, option_separator);
     }
 
     print_in_verbose_mode(option_verbose, "\n ---> ", "white");
-    print_in_verbose_mode(option_verbose, &String::from(option_number.to_string()).bold(), "green");
+    print_in_verbose_mode(
+        option_verbose,
+        &String::from(option_number.to_string()).bold(),
+        "green",
+    );
 
     if option_verbose {
         println!(
