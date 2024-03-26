@@ -11,4 +11,4 @@ colored = { version = "2.1.0" }
 serde = { version = "1.0.197" }
 serde_json = { version = "1.0.115" }
 num-traits = { version = "0.2.18" }
-regex = { version = "1.5.5" }
+regex = { version = "1.10.4" }
