@@ -1,7 +1,8 @@
 [package]
 name = "randoom"
-version = "0.3.0"
-authors = ["bencelaszlo <bencelaszlo@protonmail.com>"]
+version = "0.4.0"
+authors = ["bencelaszlo <bence@bencelaszlo.hu>"]
+edition = "2021"
 
 [dependencies.clap]
 version = "2.33.0"
