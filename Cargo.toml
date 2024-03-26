@@ -7,7 +7,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.4", default-features = false, features = ["suggestions", "color", "wrap_help", "std"] }
 rand = { version = "0.8.5" }
-colored = { version = "1.8.0" }
+colored = { version = "2.1.0" }
 serde = { version = "1.0.101" }
 serde_json = { version = "1.0.40" }
 num-traits = { version = "0.2.8" }
