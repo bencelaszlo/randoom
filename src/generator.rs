@@ -1,11 +1,12 @@
 extern crate rand;
+
 use rand::Rng;
 
 use colored::Colorize;
 
 extern crate num_traits;
 
-pub fn number_generator<T: num_traits::Num>(
+pub fn number_generator<T: num_traits::Num + std::cmp::PartialOrd>(
     n: usize,
     lower_limit: T,
     higher_limit: T,
@@ -20,7 +21,7 @@ where
 
     let mut rng = rand::thread_rng();
     for i in 0..n {
-        let generated_value: T = rng.gen_range(lower_limit, higher_limit);
+        let generated_value: T = rng.gen_range(lower_limit..higher_limit);
         if verbose_mode {
             print!(
                 "\r--> {} / {}",
@@ -39,7 +40,7 @@ pub fn bool_generator(n: usize, verbose_mode: bool) -> Vec<bool> {
 
     let mut rng = rand::thread_rng();
     for i in 0..n {
-        let temp_num_value = rng.gen_range(0, 2);
+        let temp_num_value = rng.gen_range(0..2);
         let bool_value: bool;
         if temp_num_value == 0 {
             bool_value = false;
@@ -115,7 +116,7 @@ pub fn char_generator(
     let mut rng = rand::thread_rng();
 
     while generated_values.len() != n {
-        let temp_data: &[u8] = &[rng.gen_range(0, 255) as u8];
+        let temp_data: &[u8] = &[rng.gen_range(0..255) as u8];
 
         if numbers_mode && special_characters_mode {
             if !is_control_char(temp_data[0]) {
@@ -186,7 +187,7 @@ pub fn string_generator(
 
     let mut rng = rand::thread_rng();
     for i in 0..n {
-        let string_length: usize = rng.gen_range(min_length, max_length);
+        let string_length: usize = rng.gen_range(min_length..max_length);
         let generated_chars: Vec<char> = char_generator(
             string_length,
             special_characters_mode,
@@ -211,9 +212,9 @@ pub fn color_generator(n: usize, verbose_mode: bool) -> Vec<String> {
 
     let mut rng = rand::thread_rng();
     for i in 0..n {
-        let red_component_numeric: usize = rng.gen_range(0, 255);
-        let green_component_numeric: usize = rng.gen_range(0, 255);
-        let blue_component_numeric: usize = rng.gen_range(0, 255);
+        let red_component_numeric: usize = rng.gen_range(0..255);
+        let green_component_numeric: usize = rng.gen_range(0..255);
+        let blue_component_numeric: usize = rng.gen_range(0..255);
 
         let mut red_component: String = format!("{:x}", red_component_numeric);
         let mut green_component: String = format!("{:x}", green_component_numeric);

@@ -4,23 +4,11 @@ version = "0.4.0"
 authors = ["bencelaszlo <bence@bencelaszlo.hu>"]
 edition = "2021"
 
-[dependencies.clap]
-clap = { version = "4.5.4", default-features = false,features = ["suggestions", "color", "wrap_help"] }
-
-[dependencies.rand]
-version = "0.7.2"
-
-[dependencies.colored]
-version = "1.8.0"
-
-[dependencies.serde]
-version = "1.0.101"
-
-[dependencies.serde_json]
-version = "1.0.40"
-
-[dependencies.num-traits]
-version = "0.2.8"
-
-[dependencies.regex]
-version = "1.5.5"
+[dependencies]
+clap = { version = "4.5.4", default-features = false, features = ["suggestions", "color", "wrap_help", "std"] }
+rand = { version = "0.8.5" }
+colored = { version = "1.8.0" }
+serde = { version = "1.0.101" }
+serde_json = { version = "1.0.40" }
+num-traits = { version = "0.2.8" }
+regex = { version = "1.5.5" }

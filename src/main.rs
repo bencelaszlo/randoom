@@ -4,7 +4,7 @@ mod io;
 extern crate rand;
 
 extern crate clap;
-use clap::{App, AppSettings, Arg};
+use clap::{Arg, ArgAction, Command};
 
 extern crate colored;
 use colored::*;
@@ -31,84 +31,85 @@ fn print_in_verbose_mode(verbose_mode: bool, text: &str, text_color: &str) {
 }
 
 fn main() -> std::io::Result<()> {
-    let app = App::new("randoom")
-             .setting(AppSettings::ColorAuto)
-			 .setting(AppSettings::AllowNegativeNumbers)
-             .version("0.3.0")
-             .author("Bence László <bencelaszlo@protonmail.com>")
+    let matches = Command::new("randoom")
+             .version("0.4.0")
+             .author("Bence László <bence@bencelaszlo.hu>")
              .about("Generate random numbers, texts, JSONs and colors.")
 
-	         .arg(Arg::with_name("verbose")
+	         .arg(Arg::new("verbose")
 	         .help("Verbose mode. Print more detail to the terminal.")
-	         .short("v")
+	         .short('v')
 	         .long("verbose")
-	         .takes_value(false)
+             .action(ArgAction::SetTrue)
 	         .required(false))
 
-	         .arg(Arg::with_name("datatype")
+	         .arg(Arg::new("datatype")
 	         .help("Choose the type of the generated data. Possible options: f32, f64, u32, u64, usize, i32, i64, isize, rgb.")
-	         .short("t")
+	         .short('t')
 	         .long("datatype")
-	         .takes_value(true)
+             .action(ArgAction::Set)
+	         .num_args(1)
 	         .required(true))
 
-	         .arg(Arg::with_name("number")
+	         .arg(Arg::new("number")
 	         .help("Number of data to be generated.")
-	         .short("n")
+	         .short('n')
 	         .long("number")
-	         .takes_value(true)
+	         .num_args(1)
 	         .required(true))
 
-	         .arg(Arg::with_name("lower_limit")
+	         .arg(Arg::new("lower_limit")
 	         .help("Lower limit for numbers.")
-	         .short("l")
 	         .long("lower")
-	         .takes_value(true)
+             .value_name("FILE")
+             .action(ArgAction::Set)
+	         .num_args(1)
 	         .required(false))
 
-	         .arg(Arg::with_name("higher_limit")
+	         .arg(Arg::new("higher_limit")
 	         .help("Higher limit for numbers.")
-	         .short("h")
 	         .long("higher")
-	         .takes_value(true)
+             .action(ArgAction::Set)
+	         .num_args(1)
 	         .required(false))
 
-	         .arg(Arg::with_name("separator")
+	         .arg(Arg::new("separator")
 	         .help("Separator character between individual values. Default value: \n (new line).")
-	         .short("s")
+	         .short('s')
 	         .long("separator")
-	         .takes_value(true)
-	         .required(false))
+             .action(ArgAction::Set)
+	         .num_args(1)
+             .required(false))
 
-             .arg(Arg::with_name("special_character_mode")
+             .arg(Arg::new("special_character_mode")
              .help("Turn on special characters in character generator.")
              .long("special-character-mode")
-             .takes_value(false)
+             .action(ArgAction::SetTrue)
              .required(false))
 
-             .arg(Arg::with_name("number_character_mode")
+             .arg(Arg::new("number_character_mode")
              .help("Turn on numbers in character generator.")
              .long("number-character-mode")
-             .takes_value(false)
+             .action(ArgAction::SetTrue)
              .required(false))
 
-             .arg(Arg::with_name("string_min_length")
+             .arg(Arg::new("string_min_length")
              .help("Minimum length of random strings.")
              .long("string-min-length")
-             .takes_value(true)
+             .action(ArgAction::Set)
              .required(false))
 
-             .arg(Arg::with_name("string_max_length")
+             .arg(Arg::new("string_max_length")
              .help("Maximum length of random strings.")
              .long("string-max-length")
-             .takes_value(true)
+             .action(ArgAction::Set)
              .required(false))
 
-	         .arg(Arg::with_name("output")
+	         .arg(Arg::new("output")
 	         .help("Output filename. Default value: random_data.txt")
-	         .short("o")
+	         .short('o')
 	         .long("output")
-	         .takes_value(true)
+             .action(ArgAction::Set)
 	         .required(false))
 
 	         .get_matches();
@@ -124,20 +125,19 @@ fn main() -> std::io::Result<()> {
         "m".magenta().blink().underline().bold()
     );
 
-    let mut option_verbose: bool = false;
+    let option_verbose: bool = matches.get_one::<bool>("verbose").unwrap().clone();
     let mut option_datatype: String = "".to_string();
     let mut option_number: usize = 0;
     let mut option_lower_limit: f64 = 0.0f64;
     let mut option_higher_limit: f64 = 1.0f64;
     let mut option_separator: char = "\n".parse().unwrap();
-    let mut option_special_character_mode: bool = false;
-    let mut option_number_character_mode: bool = false;
+    let option_special_character_mode: bool = matches.get_one::<bool>("special_character_mode").unwrap().clone();
+    let option_number_character_mode: bool = matches.get_one::<bool>("number_character_mode").unwrap().clone();
     let mut option_string_min_length: usize = 0;
     let mut option_string_max_length: usize = 4;
     let mut option_output_filename: String = "./randoom_data.txt".to_string();
 
-    if app.is_present("verbose") {
-        option_verbose = true;
+    if option_verbose {
         print_in_verbose_mode(
             option_verbose,
             "randoom will operate in verbose mode.",
@@ -155,32 +155,31 @@ fn main() -> std::io::Result<()> {
         option_json = json.to_string();
     }*/
 
-    if let Some(datatype) = app.value_of("datatype") {
+    if let Some(datatype) = matches.get_one::<String>("datatype") {
         print_in_verbose_mode(option_verbose, "\nChosen type: ", "white");
         print_in_verbose_mode(option_verbose, datatype, "cyan");
         option_datatype = datatype.to_string();
     }
 
-    if let Some(number) = app.value_of("number") {
-        print_in_verbose_mode(option_verbose, "\nNumber: ", "white");
+    if let Some(number) = matches.get_one::<String>("number") {
+         print_in_verbose_mode(option_verbose, "\nNumber: ", "white");
         print_in_verbose_mode(option_verbose, number, "cyan");
         option_number = number.parse().unwrap();
     }
 
-    if let Some(lower_limit) = app.value_of("lower_limit") {
+    if let Some(lower_limit) = matches.get_one::<String>("lower_limit") {
         print_in_verbose_mode(option_verbose, "\nLower limit: ", "white");
         print_in_verbose_mode(option_verbose, lower_limit, "cyan");
         option_lower_limit = lower_limit.parse().unwrap();
     }
 
-    if let Some(higher_limit) = app.value_of("higher_limit") {
+    if let Some(higher_limit) = matches.get_one::<String>("higher_limit") {
         print_in_verbose_mode(option_verbose, "\nHigher limit: ", "white");
         print_in_verbose_mode(option_verbose, higher_limit, "cyan");
         option_higher_limit = higher_limit.parse().unwrap();
     }
 
-    if app.is_present("special_character_mode") {
-        option_special_character_mode = true;
+    if option_special_character_mode {
         print_in_verbose_mode(
             option_verbose,
             "\nCharacter generator can generate special characters now, too.",
@@ -188,8 +187,7 @@ fn main() -> std::io::Result<()> {
         );
     }
 
-    if app.is_present("number_character_mode") {
-        option_number_character_mode = true;
+    if option_number_character_mode {
         print_in_verbose_mode(
             option_verbose,
             "\nCharacter generator can generate number characters now, too.",
@@ -197,25 +195,25 @@ fn main() -> std::io::Result<()> {
         );
     }
 
-    if let Some(string_min_length) = app.value_of("string_min_length") {
+    if let Some(string_min_length) = matches.get_one::<String>("string_min_length") {
         print_in_verbose_mode(option_verbose, "\nminimum length: ", "white");
         print_in_verbose_mode(option_verbose, string_min_length, "cyan");
         option_string_min_length = string_min_length.parse().unwrap();
     }
 
-    if let Some(string_max_length) = app.value_of("string_max_length") {
+    if let Some(string_max_length) = matches.get_one::<String>("string_max_length") {
         print_in_verbose_mode(option_verbose, "\nmaximum length: ", "white");
         print_in_verbose_mode(option_verbose, string_max_length, "cyan");
         option_string_max_length = string_max_length.parse().unwrap();
     }
 
-    if let Some(separator) = app.value_of("separator") {
+    if let Some(separator) = matches.get_one::<String>("separator") {
         print_in_verbose_mode(option_verbose, "\nseparator:", "white");
         print_in_verbose_mode(option_verbose, separator, "cyan");
         option_separator = separator.parse().unwrap();
     }
 
-    if let Some(output) = app.value_of("output") {
+    if let Some(output) = matches.get_one::<String>("output") {
         print_in_verbose_mode(option_verbose, "\noutput filename: ", "white");
         print_in_verbose_mode(option_verbose, output, "cyan");
         option_output_filename = output.parse().unwrap();
