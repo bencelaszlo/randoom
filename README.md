@@ -35,5 +35,3 @@ An easy-to-use CLI tool for generating random numbers, texts, and colors.
 - clap (for argument parsing): https://crates.io/crates/clap
 - colored (for colored terminal output): https://crates.io/crates/colored
 - num-traits: https://crates.io/crates/num-traits
-- serde: https://crates.io/crates/serde
-- serde_json: https://crates.io/crates/serde_json

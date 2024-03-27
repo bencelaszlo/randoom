@@ -9,9 +9,6 @@ use clap::{Arg, ArgAction, Command};
 extern crate colored;
 use colored::*;
 
-extern crate serde;
-extern crate serde_json;
-
 extern crate regex;
 
 fn print_in_verbose_mode(verbose_mode: bool, text: &str, text_color: &str) {
@@ -34,7 +31,7 @@ fn main() -> std::io::Result<()> {
     let matches = Command::new("randoom")
              .version("0.4.0")
              .author("Bence László <bence@bencelaszlo.hu>")
-             .about("Generate random numbers, texts, JSONs and colors.")
+             .about("Generate random numbers, texts, and colors.")
 
 	         .arg(Arg::new("verbose")
 	         .help("Verbose mode. Print more detail to the terminal.")
@@ -150,10 +147,6 @@ fn main() -> std::io::Result<()> {
         "\nGenerate random data with the following parameters:",
         "cyan",
     );
-
-    /*if let Some(json) = app.value_of("json") {
-        option_json = json.to_string();
-    }*/
 
     if let Some(datatype) = matches.get_one::<String>("datatype") {
         print_in_verbose_mode(option_verbose, "\nChosen type: ", "white");
